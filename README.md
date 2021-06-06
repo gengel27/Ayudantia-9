@@ -1,2 +1,0 @@
-# Ayudantia 9
- 
