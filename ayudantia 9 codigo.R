@@ -1,23 +1,17 @@
----
-title: "ayudantia 9"
-output: github_document
----
-
-Cargamos y ordenamos los datos para la primera regresion lineal.
-
-````{r}
-library(pROC)
+library(tidyverse)
+library(GGally)
+install.packages("regclass")
 library(regclass)
+install.packages("pROC")
+library(pROC)
+install.packages("rsample")
 library(rsample)
 library(readxl)
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
+install.packages("VIF")
 library(VIF)
-library(GGally)
-`````
-
-````{r}
 getwd()
 toyota <- read.csv("/Users/gabrielengel/Downloads/Ayudantia_DataMining01_2021-main/Ayudantia 9/toyota.csv")
 
@@ -40,12 +34,16 @@ toyota %>% filter(engineSize == 0) %>% nrow()
 toyota <- toyota %>%  filter(engineSize != 0)
 
 toyota %>% filter(tax == 0) %>% nrow()
+
+## es normal
+
+
 sum(is.na(toyota))
 sum(is.null(toyota))
-`````
-Hacemos la regresion lineal para el precio
 
-````{r}
+
+##listos los datos
+
 toyota %>% select(year, mileage, tax, mpg, engineSize, price) %>% 
   ggpairs(lower = list(continuous = wrap("points", alpha = 0.3, size = 0.5)))
 
@@ -84,7 +82,7 @@ toyota %>% filter(., year >= 2005) %>% ggplot(aes(year, price)) +
   stat_smooth(method = "gam", formula = y ~ s(x, k=3))
 
 toyota_esc <- toyota
-toyota[,c(2,3,5,7,8,9)] <- scale(toyota_esc[,c(2,3,5,7,8,9)])
+toyota[,c(2,3,5,7,8,9)] <- scale(audi_sca[,c(2,3,5,7,8,9)])
 
 toyota_esc %>%  head()
 
@@ -104,14 +102,41 @@ summary(reg_mult)
 
 VIF(reg_mult)
 
-
+install.packages("olsrr")
 library(olsrr)
 
 
 fuerza_bruta <- ols_step_all_possible(reg_mult)
 
 plot(fuerza_bruta)
-`````
 
-Ahora hacemos la regresion de los vinos
-`````
+
+#reg lineal de vinos
+
+summary(vinos)
+
+vinos %>% filter(citric.acid == 0) %>% nrow()
+#es noraml
+
+sum(is.na(vinos))
+sum(is.null(vinos))
+#no hay na o null
+
+
+vinos %>% head()
+glimpse(vinos)
+
+
+
+
+
+ggplot(vinos,aes(x=factor(quality))) +
+  geom_bar(col ="black",fill="#993333",alpha=0.5) +
+  theme(axis.text.x = element_text(face="bold", size=10)) +
+  scale_x_discrete("Hotel") +
+  scale_y_continuous("Count")
+
+
+set.seed(123)
+
+glm.fit <- glm(quality, data = vinos , family = "binomial")
